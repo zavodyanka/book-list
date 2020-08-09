@@ -1,0 +1,89 @@
+<div class="card">
+    <div class="card-header">
+      {{pageTitle}}
+    </div>
+
+    <div class="alert alert-danger"
+         *ngIf="errorMessage">{{errorMessage}}
+    </div>
+
+    <div class="card-body">
+      <form novalidate
+            (ngSubmit)="saveBook()"
+            [formGroup]="bookForm">
+
+        <div class="form-group row mb-2">
+          <label class="col-md-2 col-form-label"
+                 for="bookName">Book Name</label>
+          <div class="col-md-8">
+            <input class="form-control"
+                   id="bookName"
+                   type="text"
+                   placeholder="Name (required)"
+                   formControlName="name"
+                   [ngClass]="{'is-invalid': displayMessage.author}"/>
+            <span class="invalid-feedback">
+            {{displayMessage.author}}
+            </span>
+          </div>
+        </div>
+
+        <div class="form-group row mb-2">
+          <label class="col-md-2 col-form-label"
+                 for="bookAuthor">Author</label>
+          <div class="col-md-8">
+            <input class="form-control"
+                   id="bookAuthor"
+                   type="text"
+                   placeholder="Author (required)"
+                   formControlName="author"
+                   [ngClass]="{'is-invalid': displayMessage.author}" />
+            <span class="invalid-feedback">
+              {{displayMessage.author}}
+            </span>
+          </div>
+        </div>
+
+        <div class="form-group row mb-2">
+          <label class="col-md-2 col-form-label"
+                 for="categories">Categories</label>
+
+          <div class="col-md-8">
+            <div >
+              <select id="categories" multiple formControlName="categories" name="categories" >
+                <option *ngFor="let category of categoryList" [ngValue]="category.id" >
+                  {{ category.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group row mb-2">
+          <div class="offset-md-2 col-md-4">
+            <button class="btn btn-primary mr-3"
+                    style="width:80px;"
+                    type="submit"
+                    [title]="bookForm.valid ? 'Save your entered data' : 'Disabled until the form data is valid'"
+                    [disabled]="!bookForm.valid">
+              Save
+            </button>
+            <button class="btn btn-outline-secondary mr-3"
+                    style="width:80px;"
+                    type="button"
+                    title="Cancel your edits"
+                    [routerLink]="['/books']">
+              Cancel
+            </button>
+            <button class="btn btn-outline-warning"
+                    style="width:80px"
+                    type="button"
+                    title="Delete this book"
+                    (click)="deleteBook()">
+              Delete
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>

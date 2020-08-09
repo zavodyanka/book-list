@@ -1,0 +1,45 @@
+<div class='card'>
+    <div class='card-header'>
+      {{pageTitle}}
+      <button class="btn btn-outline-primary btn-sm"
+        [routerLink]="['/books', 0, 'edit']">
+          Add
+      </button>
+    </div>
+    <div class='card-body'>
+      <div class='table-responsive'>
+        <table class='table'
+               *ngIf='books && books.length'>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Author</th>
+              <th>Categories</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor='let book of books'>
+              <td>
+                <a [routerLink]="['/books', book.id]">
+                  {{ book.name }}
+                </a>
+              </td>
+              <td>{{ book.author }}</td>
+              <td>{{ getCategoriesString(book.categories) }}</td>
+              <td>
+                <button class="btn btn-outline-primary btn-sm"
+                        [routerLink]="['/books', book.id, 'edit']">
+                  Edit
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div *ngIf='errorMessage'
+       class='alert alert-danger'>
+    Error: {{ errorMessage }}
+  </div>
