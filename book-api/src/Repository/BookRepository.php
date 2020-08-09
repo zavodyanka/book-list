@@ -39,4 +39,18 @@ class BookRepository extends ServiceEntityRepository
         $this->manager->persist($book);
         $this->manager->flush();
     }
+
+    public function update(Book $book): Book
+    {
+        $this->manager->persist($book);
+        $this->manager->flush();
+
+        return $book;
+    }
+
+    public function remove(Book $book)
+    {
+        $this->manager->remove($book);
+        $this->manager->flush();
+    }
 }

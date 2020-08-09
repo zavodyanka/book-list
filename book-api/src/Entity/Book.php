@@ -96,4 +96,14 @@ class Book
 
         return $this;
     }
+
+    public function toArray()
+    {
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'author' => $this->getAuthor(),
+            'categories' => $this->getCategories(),
+        ];
+    }
 }
