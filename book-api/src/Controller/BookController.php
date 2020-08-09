@@ -19,7 +19,7 @@ class BookController
     }
 
     /**
-     * @Route("/books", name="get_all_books", methods={"GET"})
+     * @Route("/api/books", name="get_all_books", methods={"GET"})
      */
     public function getAll(): JsonResponse
     {
@@ -39,7 +39,7 @@ class BookController
     }
 
     /**
-     * @Route("/books/{id}", name="get_one_book", methods={"GET"})
+     * @Route("/api/books/{id}", name="get_one_book", methods={"GET"})
      */
     public function get($id): JsonResponse
     {
@@ -56,7 +56,7 @@ class BookController
     }
 
     /**
-     * @Route("/books/", name="add_book", methods={"POST"})
+     * @Route("/api/books/", name="add_book", methods={"POST"})
      */
     public function add(Request $request): JsonResponse
     {
@@ -76,7 +76,7 @@ class BookController
     }
 
     /**
-     * @Route("/books/{id}", name="update_books", methods={"PUT"})
+     * @Route("/api/books/{id}", name="update_books", methods={"PUT"})
      */
     public function update($id, Request $request): JsonResponse
     {
@@ -93,7 +93,7 @@ class BookController
     }
 
     /**
-     * @Route("/books/{id}", name="delete_book", methods={"DELETE"})
+     * @Route("/api/books/{id}", name="delete_book", methods={"DELETE"})
      */
     public function delete($id): JsonResponse
     {

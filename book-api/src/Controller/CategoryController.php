@@ -17,7 +17,7 @@ class CategoryController extends AbstractController
     }
 
     /**
-     * @Route("/categories", name="get_all_categories", methods={"GET"})
+     * @Route("/api/categories", name="get_all_categories", methods={"GET"})
      */
     public function getAll(): JsonResponse
     {
