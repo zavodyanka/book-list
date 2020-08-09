@@ -53,7 +53,7 @@ export class BookService {
             catchError(this.handleError)
           );
       }
-    
+
       deleteBook(id: number): Observable<{}> {
         const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
         const url = `${this.booksUrl}/${id}`;
@@ -62,8 +62,8 @@ export class BookService {
             catchError(this.handleError)
           );
       }
-    
-      updateBook(book: IBook): Observable<IBook> {
+
+      updateBook(id: number, book: IBook): Observable<IBook> {
         const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
         const url = `${this.booksUrl}/${book.id}`;
         return this.http.put<IBook>(url, book, { headers })
@@ -73,7 +73,7 @@ export class BookService {
             catchError(this.handleError)
           );
       }
-    
+
 
     private handleError(err: HttpErrorResponse) {
         let errorMessage = '';
@@ -83,7 +83,7 @@ export class BookService {
           errorMessage = `Server returned code: ${err.status}, error message is: ${err.message}`;
         }
         console.error(errorMessage);
-     
+
         return throwError(errorMessage);
     }
 

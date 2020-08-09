@@ -136,6 +136,7 @@ export class BookEditComponent implements OnInit, AfterViewInit, OnDestroy {
         console.log('this.book: ', this.book);
         console.log('this.bookForm.value: ', this.bookForm.value);
         const book = {
+          id: this.book.id,
           name: this.bookForm.value.name,
           author: this.bookForm.value.author,
           categories: this.bookForm.value.categories
@@ -143,7 +144,7 @@ export class BookEditComponent implements OnInit, AfterViewInit, OnDestroy {
         book.categories = this.categoryList
           .filter(category => book.categories.includes(category.id))
           .map(category => {
-            return { name: category.name }
+            return category.name;
           });
 
 
