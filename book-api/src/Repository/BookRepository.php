@@ -28,14 +28,8 @@ class BookRepository extends ServiceEntityRepository
         $this->manager = $manager;
     }
 
-    public function save($name, $author, $categories)
+    public function save(Book $book)
     {
-        $book = new Book();
-
-        $book
-            ->setName($name)
-            ->setAuthor($author);
-
         $this->manager->persist($book);
         $this->manager->flush();
     }

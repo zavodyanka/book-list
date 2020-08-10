@@ -61,7 +61,7 @@ class BookController
     }
 
     /**
-     * @Route("/api/books/", name="add_book", methods={"POST"})
+     * @Route("/api/books", name="add_book", methods={"POST"})
      */
     public function add(Request $request): JsonResponse
     {

@@ -69,15 +69,17 @@ class Book
 
     public function add(array $data): string
     {
-        $name = $data['name'];
-        $author = $data['author'];
-        $categories = $data['categories'];
-
-        if (empty($name) || empty($author) || empty($categories)) {
+        if (empty($data['name']) || empty($data['author'])) {
             throw new NotFoundHttpException('Expecting mandatory parameters!');
         }
+        $book = new EntityBook();
 
-        $this->bookRepository->save($name, $author, $categories);
+        $book
+            ->setName($data['name'])
+            ->setAuthor($data['author']);
+        $this->addCategories($book, $data['categories']);
+
+        $this->bookRepository->save($book);
 
         return 'Book has been created!';
     }
@@ -101,8 +103,13 @@ class Book
             $book->removeCategory($category);
         }
 
+        $this->addCategories($book, $newCategories);
+    }
+
+    private function addCategories(EntityBook $book, array $names)
+    {
         $categories = $this->categoryRepository->findBy(
-            ['name' => $newCategories]
+            ['name' => $names]
         );
 
         foreach ($categories as $category) {
