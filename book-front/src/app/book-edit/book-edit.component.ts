@@ -89,13 +89,14 @@ export class BookEditComponent implements OnInit, AfterViewInit, OnDestroy {
     this.sub.push(
       combineLatest([book$, categoryList$])
         .subscribe(([book, categoryList]) => {
-          this.displayBook(book);
           this.categoryList = categoryList;
+          this.displayBook(book);
         })
     );
   }
 
   displayBook(book: IBook): void {
+    let categories;
     if (this.bookForm) {
       this.bookForm.reset();
     }
@@ -103,15 +104,17 @@ export class BookEditComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (this.book.id === 0) {
       this.pageTitle = 'Add book';
+      categories = this.categoryList;
     } else {
       this.pageTitle = `Edit book: ${this.book.name}`;
+      categories = this.book.categories;
     }
 
     // Update the data on the form
     this.bookForm.patchValue({
       name: this.book.name,
       author: this.book.author,
-      categories: this.book.categories.map((category) => category.id)
+      categories: categories.map((category) => category.id)
     });
     // console.log('this.bookForm.value: ', this.bookForm.value);
   }
