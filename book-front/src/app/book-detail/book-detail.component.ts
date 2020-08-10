@@ -15,12 +15,10 @@ export class BookDetailComponent implements OnInit {
   errorMessage = '';
 
   constructor(
-    private route: ActivatedRoute, 
+    private route: ActivatedRoute,
     private bookService: BookService,
     private router: Router
-    ) { 
-    //console.log(this.route.snapshot.paramMap.get('id'));
-  }
+    ) {}
 
   onBack(): void {
     this.router.navigate(['/books']);

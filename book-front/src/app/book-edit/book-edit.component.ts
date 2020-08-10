@@ -8,6 +8,7 @@ import {BookService} from '../shared/service/book.service';
 import {CategoryService} from '../shared/service/category.service';
 import {GenericValidator} from '../shared/generic-validator';
 import {debounceTime} from 'rxjs/operators';
+import {HttpResponse} from '@angular/common/http';
 
 
 @Component({
@@ -116,7 +117,6 @@ export class BookEditComponent implements OnInit, AfterViewInit, OnDestroy {
       author: this.book.author,
       categories: categories.map((category) => category.id)
     });
-    // console.log('this.bookForm.value: ', this.bookForm.value);
   }
 
   deleteBook(): void {
@@ -127,9 +127,8 @@ export class BookEditComponent implements OnInit, AfterViewInit, OnDestroy {
       if (confirm(`Really delete the book: ${this.book.name}?`)) {
         this.sub.push(
           this.bookService.deleteBook(this.book.id)
-            .subscribe((response) => {
-              // console.log('data: ', response);
-              if (response.status == 204) {
+            .subscribe((response: HttpResponse<any>) => {
+              if (response.status === 204) {
                 this.onSaveComplete();
               }
             })
@@ -141,8 +140,6 @@ export class BookEditComponent implements OnInit, AfterViewInit, OnDestroy {
   saveBook(): void {
     if (this.bookForm.valid) {
       if (this.bookForm.dirty) {
-        // console.log('this.book: ', this.book);
-        // console.log('this.bookForm.value: ', this.bookForm.value);
         const book = {
           id: this.book.id,
           name: this.bookForm.value.name,
@@ -154,8 +151,6 @@ export class BookEditComponent implements OnInit, AfterViewInit, OnDestroy {
           .map(category => {
             return category.name;
           });
-
-        // console.log('book: ', book);
 
         if (this.book.id === 0) {
           this.bookService.createBook(book)
@@ -177,7 +172,6 @@ export class BookEditComponent implements OnInit, AfterViewInit, OnDestroy {
       this.errorMessage = 'Please correct the validation errors.';
     }
   }
-
 
   onSaveComplete(): void {
     this.bookForm.reset();
