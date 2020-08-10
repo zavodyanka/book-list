@@ -1,27 +1,31 @@
 <?php
 namespace App\Controller;
 
-use App\Repository\BookRepository;
-use App\Repository\CategoryRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Service\Book;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class BookController
 {
-    private $bookRepository;
     /**
-     * @var CategoryRepository
+     * @var LoggerInterface
      */
-    private $categoryRepository;
+    private $logger;
 
-    public function __construct(BookRepository $bookRepository, CategoryRepository $categoryRepository)
-    {
-        $this->bookRepository = $bookRepository;
-        $this->categoryRepository = $categoryRepository;
+    /**
+     * @var Book
+     */
+    private $service;
+
+    public function __construct(
+        Book $service,
+        LoggerInterface $logger
+    ) {
+        $this->logger = $logger;
+        $this->service = $service;
     }
 
     /**
@@ -29,55 +33,31 @@ class BookController
      */
     public function getAll(): JsonResponse
     {
-        $books = $this->bookRepository->findAll();
-        $data = [];
+        try {
+            return new JsonResponse(
+                $this->service->getList(),
+                Response::HTTP_OK
+            );
+        } catch (\Exception $ex) {
+            $this->logger->error($ex->getMessage());
 
-        foreach ($books as $book) {
-            $categories = $book->getCategories();
-            $bookCategories = [];
-
-            foreach ($categories as $category) {
-                $bookCategories[] = [
-                    'id' => $category->getId(),
-                    'name' => $category->getName()
-                ];
-            }
-
-            $data[] = [
-                'id' => $book->getId(),
-                'name' => $book->getName(),
-                'author' => $book->getAuthor(),
-                'categories' => $bookCategories,
-            ];
+            return new JsonResponse(['error' => $ex->getMessage()], Response::HTTP_OK);
         }
 
-        return new JsonResponse($data, Response::HTTP_OK);
     }
 
     /**
      * @Route("/api/books/{id}", name="get_one_book", methods={"GET"})
      */
-    public function get($id): JsonResponse
+    public function get(int $id): JsonResponse
     {
-        $book = $this->bookRepository->findOneBy(['id' => $id]);
-        $categories = $book->getCategories();
-        $bookCategories = [];
+        try {
+            return new JsonResponse($this->service->getOneById($id), Response::HTTP_OK);
+        } catch (\Exception $ex) {
+            $this->logger->error($ex->getMessage());
 
-        foreach ($categories as $category) {
-            $bookCategories[] = [
-                'id' => $category->getId(),
-                'name' => $category->getName()
-            ];
+            return new JsonResponse(['error' => $ex->getMessage()], Response::HTTP_OK);
         }
-
-        $data = [
-            'id' => $book->getId(),
-            'name' => $book->getName(),
-            'author' => $book->getAuthor(),
-            'categories' => $bookCategories,
-        ];
-
-        return new JsonResponse($data, Response::HTTP_OK);
     }
 
     /**
@@ -85,61 +65,53 @@ class BookController
      */
     public function add(Request $request): JsonResponse
     {
-        $data = \json_decode($request->getContent(), true);
+        try {
+            $data = \json_decode($request->getContent(), true);
 
-        $name = $data['name'];
-        $author = $data['author'];
-        $categories = $data['categories'];
+            return new JsonResponse(
+                ['status' => $this->service->add($data)],
+                Response::HTTP_CREATED
+            );
+        } catch (\Exception $ex) {
+            $this->logger->error($ex->getMessage());
 
-        if (empty($name) || empty($author) || empty($categories)) {
-            throw new NotFoundHttpException('Expecting mandatory parameters!');
+            return new JsonResponse(['error' => $ex->getMessage()], Response::HTTP_OK);
         }
-
-        $this->bookRepository->save($name, $author, $categories);
-
-        return new JsonResponse(['status' => 'Book has been created!'], Response::HTTP_CREATED);
     }
 
     /**
      * @Route("/api/books/{id}", name="update_books", methods={"PUT"})
      */
-    public function update($id, Request $request): JsonResponse
+    public function update(int $id, Request $request): JsonResponse
     {
-        $book = $this->bookRepository->findOneBy(['id' => $id]);
-        $categories = $book->getCategories();
-        $data = json_decode($request->getContent(), true);
+        try {
+            $data = json_decode($request->getContent(), true);
 
-        empty($data['name']) ?: $book->setName($data['name']);
-        empty($data['author']) ?: $book->setAuthor($data['author']);
+            return new JsonResponse(
+                $this->service->update($id, $data),
+                Response::HTTP_OK
+            );
+        } catch (\Exception $ex) {
+            $this->logger->error($ex->getMessage());
 
-        foreach ($categories as $category) {
-            $book->removeCategory($category);
+            return new JsonResponse(['error' => $ex->getMessage()], Response::HTTP_OK);
         }
-
-
-        $categories = $this->categoryRepository->findBy(
-            ['name' => $data['categories']]
-        );
-
-        foreach ($categories as $category) {
-            $book->addCategory($category);
-        }
-
-
-        $updatedBook = $this->bookRepository->update($book);
-
-        return new JsonResponse($updatedBook->toArray(), Response::HTTP_OK);
     }
 
     /**
      * @Route("/api/books/{id}", name="delete_book", methods={"DELETE"})
      */
-    public function delete($id): JsonResponse
+    public function delete(int $id): JsonResponse
     {
-        $book = $this->bookRepository->findOneBy(['id' => $id]);
+        try {
+            return new JsonResponse(
+                ['status' => $this->service->remove($id)],
+                Response::HTTP_NO_CONTENT
+            );
+        } catch (\Exception $ex) {
+            $this->logger->error($ex->getMessage());
 
-        $this->bookRepository->remove($book);
-
-        return new JsonResponse(['status' => 'Customer has been deleted'], Response::HTTP_NO_CONTENT);
+            return new JsonResponse(['error' => $ex->getMessage()], Response::HTTP_OK);
+        }
     }
 }
