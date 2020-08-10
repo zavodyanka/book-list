@@ -113,7 +113,7 @@ export class BookEditComponent implements OnInit, AfterViewInit, OnDestroy {
       author: this.book.author,
       categories: this.book.categories.map((category) => category.id)
     });
-    console.log('this.bookForm.value: ', this.bookForm.value);
+    // console.log('this.bookForm.value: ', this.bookForm.value);
   }
 
   deleteBook(): void {
@@ -124,7 +124,12 @@ export class BookEditComponent implements OnInit, AfterViewInit, OnDestroy {
       if (confirm(`Really delete the book: ${this.book.name}?`)) {
         this.sub.push(
           this.bookService.deleteBook(this.book.id)
-            .subscribe((data)=>console.log('data: ', data))
+            .subscribe((response) => {
+              // console.log('data: ', response);
+              if (response.status == 204) {
+                this.onSaveComplete();
+              }
+            })
         );
       }
     }
@@ -133,8 +138,8 @@ export class BookEditComponent implements OnInit, AfterViewInit, OnDestroy {
   saveBook(): void {
     if (this.bookForm.valid) {
       if (this.bookForm.dirty) {
-        console.log('this.book: ', this.book);
-        console.log('this.bookForm.value: ', this.bookForm.value);
+        // console.log('this.book: ', this.book);
+        // console.log('this.bookForm.value: ', this.bookForm.value);
         const book = {
           id: this.book.id,
           name: this.bookForm.value.name,
@@ -147,8 +152,7 @@ export class BookEditComponent implements OnInit, AfterViewInit, OnDestroy {
             return category.name;
           });
 
-
-        console.log('book: ', book);
+        // console.log('book: ', book);
 
         if (this.book.id === 0) {
           this.bookService.createBook(book)

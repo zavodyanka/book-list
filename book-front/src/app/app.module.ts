@@ -8,7 +8,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
 import { BookListComponent } from './book-list/book-list.component';
 import { BookDetailComponent } from './book-detail/book-detail.component';
-import { ResponseCutInterceptor } from './interceptor/response.cut.interceptor';
 import { BookEditComponent } from './book-edit/book-edit.component';
 
 @NgModule({
@@ -28,13 +27,6 @@ import { BookEditComponent } from './book-edit/book-edit.component';
       { path: '**', redirectTo: 'books', pathMatch: 'full' }
     ]),
     ReactiveFormsModule
-  ],
-  providers: [
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: ResponseCutInterceptor,
-      multi: true
-    },
   ],
   bootstrap: [AppComponent]
 })

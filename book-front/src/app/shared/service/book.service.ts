@@ -57,7 +57,7 @@ export class BookService {
       deleteBook(id: number): Observable<{}> {
         const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
         const url = `${this.booksUrl}/${id}`;
-        return this.http.delete(url, { headers })
+        return this.http.delete(url, { headers, observe : 'response' })
           .pipe(
             catchError(this.handleError)
           );
